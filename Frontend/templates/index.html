@@ -3,11 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App</title>
+    <title>Translate App</title>
+    <!-- Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEJx6kFWEw4v6q6F6lX7p6+llg7pv5WeVg62jUvvo0n5V2Yuw2mcUS8ZyKc9g" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            padding-top: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            color: #007bff;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control, .btn {
+            border-radius: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .custom-dropdown button {
+            width: 100%;
+            background-color: #f8f9fa;
+            border: 2px solid #007bff;
+            color: #007bff;
+            text-align: left;
+            padding: 10px;
+        }
+
+        .custom-dropdown button:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .result-area h5 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .result-area p {
+            font-size: 1.1rem;
+            color: #007bff;
+        }
+
+        .language-select {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>heyyy!</h1>
-    <p>Quack!</p>
-    <p>For the JSON response, visit <a href="/api">/api</a></p>
+
+<div class="container">
+    <h1 class="heading">Translate Your Text</h1>
+
+    <form>
+        <!-- Text Input -->
+        <div class="form-group">
+            <label for="sourceText">Enter Text</label>
+            <textarea class="form-control" id="sourceText" rows="4" placeholder="Enter text to translate..."></textarea>
+        </div>
+
+        <!-- Language Selection (Dropdown) -->
+        <div class="form-group mt-4">
+            <label for="languageSelect">Select Language</label>
+            <select class="form-control language-select" id="languageSelect">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+            </select>
+        </div>
+
+        <!-- Translate Button -->
+        <button type="submit" class="btn btn-primary w-100 mt-4">Translate</button>
+    </form>
+
+    <!-- Translated Result -->
+    <div class="result-area mt-5">
+        <h5>Translated Text</h5>
+        <p id="resultText">Your translated text will appear here...</p>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz4fnFO9gyb88KTuL6U4ybzV7ir2leWxXySzszsh7d6q6gPOaygU3de9p4p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0Z7T9U6pyb8J3n8WTn8b+tXkQ2U29zj5h6pYHXBY3DgFbD/J" crossorigin="anonymous"></script>
+
+<!-- Custom JavaScript -->
+<script>
+    // Handle form submission (simulate translation)
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        const sourceText = document.getElementById('sourceText').value;
+        const selectedLanguage = document.getElementById('languageSelect').value;
+
+        if (sourceText && selectedLanguage) {
+            document.getElementById('resultText').innerHTML = `
+                Translated text in ${selectedLanguage.toUpperCase()}:<br><strong>${sourceText}</strong>
+            `;
+        } else {
+            document.getElementById('resultText').innerHTML = '<strong>Please enter text and select a language.</strong>';
+        }
+    });
+</script>
+
 </body>
 </html>
