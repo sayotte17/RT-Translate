@@ -1,26 +1,27 @@
+import deepl
 from flask import Flask, request, jsonify
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Home route to check if the server is running
-@app.route('/')
-def home():
-    return jsonify({"message": "Flask server is running!"})
+DEEPL_API_KEY = "b72f940b-e07b-4985-b78c-16cd67c7af51:fx"
+translator = deepl.Translator(DEEPL_API_KEY)
 
-# Test endpoint to verify API communication
-@app.route('/test', methods=['POST'])
-def test_api():
-    # Get JSON data from the request
-    data = request.get_json()
+@app.route('/translate', methods=['POST'])
+def translate_text():
+    try:
+        data = request.json
+        if 'text' not in data or 'target_lang' not in data:
+            return jsonify({"error": "Missing 'text' or 'target_lang' in request"}), 400
 
-    # Check if "text" key is present in the received JSON
-    if not data or "text" not in data:
-        return jsonify({"error": "Invalid request, 'text' key is required"}), 400
+        text = data['text']
+        target_lang = data['target_lang'].upper()  # DeepL uses uppercase language codes
 
-    # Send back the received text as confirmation
-    return jsonify({"received_text": data["text"]})
+        translation = translator.translate_text(text, target_lang=target_lang)
 
-# Run the Flask app
+        return jsonify({"translated_text": translation.text})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
