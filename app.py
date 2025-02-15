@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
+import requests
 
 import os
 app = Flask(__name__, template_folder=os.path.join('Frontend', 'templates'))
@@ -12,4 +13,6 @@ def chicken():
     return jsonify({"message": "quack"})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=3000)
+    
+
