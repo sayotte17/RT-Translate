@@ -1,6 +1,11 @@
 import deepl, whisper, os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import ssl
+import urllib.request
+
+# Disable SSL verification globally
+ssl._create_default_https_context = ssl._create_unverified_context
 
 app = Flask(__name__)
 CORS(app)
