@@ -5,17 +5,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-import whisper
-
-# Manually set the model path
-model_path = "/Users/sebastien/.cache/whisper/tiny.pt"
-
-# Check if the model exists before loading
-if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Model file not found at {model_path}. Please check the path!")
-
-# Load the model from the local file directly
-model = whisper.load_model("tiny", download_root="/Users/sebastien/.cache/whisper/")
+model = whisper.load_model("turbo")
 
 DEEPL_API_KEY = "b72f940b-e07b-4985-b78c-16cd67c7af51:fx"
 translator = deepl.Translator(DEEPL_API_KEY)
