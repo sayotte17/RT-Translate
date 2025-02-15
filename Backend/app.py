@@ -1,13 +1,17 @@
 import deepl
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 DEEPL_API_KEY = "b72f940b-e07b-4985-b78c-16cd67c7af51:fx"
 translator = deepl.Translator(DEEPL_API_KEY)
 
 @app.route('/translate', methods=['POST'])
 def translate_text():
+    if request.method == 'OPTIONS':
+        return jsonify({"message": "CORS preflight OK"}), 200
     try:
         data = request.json
         if 'text' not in data or 'target_lang' not in data:
