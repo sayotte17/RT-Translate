@@ -3,8 +3,6 @@ from flask import Flask, jsonify, render_template
 import os
 app = Flask(__name__, template_folder=os.path.join('Frontend', 'templates'))
 
-
-
 @app.route('/')
 def home():
     return render_template('index.html')
