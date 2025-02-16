@@ -1,8 +1,6 @@
-import deepl, whisper, os
+import deepl, whisper, os, json, ssl, urllib.request
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import ssl
-import urllib.request
 
 # Disable SSL verification globally
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -14,6 +12,20 @@ model = whisper.load_model("turbo")
 
 DEEPL_API_KEY = "b72f940b-e07b-4985-b78c-16cd67c7af51:fx"
 translator = deepl.Translator(DEEPL_API_KEY)
+
+def load_stats():
+    """Load stats from db.json, or return defaults if not found."""
+    if not os.path.exists('db.json'):
+        # If file doesn't exist, return default stats
+        return {"translations_processed": 0, "words_translated": 0}
+    
+    with open('db.json', 'r') as f:
+        return json.load(f)
+
+def save_stats(stats):
+    """Save stats dictionary to db.json."""
+    with open('db.json', 'w') as f:
+        json.dump(stats, f)
 
 @app.route('/translate', methods=['POST'])
 def translate_text():
@@ -28,6 +40,13 @@ def translate_text():
         target_lang = data['target_lang'].upper()  # DeepL uses uppercase language codes
 
         translation = translator.translate_text(text, target_lang=target_lang)
+
+        # --- NEW CODE: update stats ---
+        stats = load_stats()
+        stats["translations_processed"] += 1
+        stats["words_translated"] += len(text.split())
+        save_stats(stats)
+        # --- END NEW CODE ---
 
         return jsonify({"translated_text": translation.text})
 
@@ -73,6 +92,15 @@ def speech_to_text_and_translate():
 
         # Clean up
         os.remove(file_path)
+
+        # --- NEW CODE: update stats ---
+        stats = load_stats()
+        # You might want to track "speech translations processed" and "spoken words" differently.
+        stats["translations_processed"] += 1
+        stats["words_translated"] += len(transcribed_text.split())
+        save_stats(stats)
+        # --- END NEW CODE ---
+
 
         # Return both raw transcription and final translation
         return jsonify({
