@@ -57,6 +57,16 @@
             font-size: 1.1rem;
             color: #007bff;
         }
+
+        /* Custom styles for dropdown with scrollable options */
+        .dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+            width: 100%;
+        }
+        .dropdown-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -102,41 +112,46 @@
             </select>
         </div>
 
-        <!-- Target Language Dropdown -->
+        <!-- Target Language Dropdown with checkboxes -->
         <div class="form-group mt-4">
-            <label for="targetLanguage">Select Target Language</label>
-            <select class="form-control language-select" id="targetLanguage">
-                <option value="EN">English</option>
-                <option value="DE">German</option>
-                <option value="FR">French</option>
-                <option value="ES">Spanish</option>
-                <option value="AR">Arabic</option>
-                <option value="BG">Bulgarian</option>
-                <option value="CS">Czech</option>
-                <option value="DA">Danish</option>
-                <option value="EL">Greek</option>
-                <option value="FI">Finnish</option>
-                <option value="HU">Hungarian</option>
-                <option value="ID">Indonesian</option>
-                <option value="IT">Italian</option>
-                <option value="JA">Japanese</option>
-                <option value="KO">Korean</option>
-                <option value="LT">Lithuanian</option>
-                <option value="LV">Latvian</option>
-                <option value="NB">Norwegian Bokmål</option>
-                <option value="NL">Dutch</option>
-                <option value="PL">Polish</option>
-                <option value="PT">Portuguese</option>
-                <option value="RO">Romanian</option>
-                <option value="RU">Russian</option>
-                <option value="SK">Slovak</option>
-                <option value="SL">Slovenian</option>
-                <option value="SV">Swedish</option>
-                <option value="TR">Turkish</option>
-                <option value="UK">Ukrainian</option>
-                <option value="ZH-HANS">Chinese (Simplified)</option>
-                <option value="ZH-HANT">Chinese (Traditional)</option>
-            </select>
+            <label for="targetLanguage">Select Target Languages</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                    Choose Target Languages
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <li><label class="dropdown-item"><input type="checkbox" value="EN"> English</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="DE"> German</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="FR"> French</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="ES"> Spanish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="AR"> Arabic</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="BG"> Bulgarian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="CS"> Czech</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="DA"> Danish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="EL"> Greek</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="FI"> Finnish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="HU"> Hungarian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="ID"> Indonesian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="IT"> Italian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="JA"> Japanese</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="KO"> Korean</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="LT"> Lithuanian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="LV"> Latvian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="NB"> Norwegian Bokmål</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="NL"> Dutch</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="PL"> Polish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="PT"> Portuguese</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="RO"> Romanian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="RU"> Russian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="SK"> Slovak</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="SL"> Slovenian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="SV"> Swedish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="TR"> Turkish</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="UK"> Ukrainian</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="ZH-HANS"> Chinese (Simplified)</label></li>
+                    <li><label class="dropdown-item"><input type="checkbox" value="ZH-HANT"> Chinese (Traditional)</label></li>
+                </ul>
+            </div>
         </div>
 
         <!-- Text Area for Input -->
@@ -157,15 +172,21 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Handle form submission
     $('#translateForm').on('submit', function(event) {
         event.preventDefault();
 
         const sourceText = $('#sourceText').val();
-        const targetLanguage = $('#targetLanguage').val();
+        const targetLanguages = [];
+        
+        // Collect selected target languages
+        $('#dropdownMenuButton').siblings('.dropdown-menu').find('input[type="checkbox"]:checked').each(function() {
+            targetLanguages.push($(this).val());
+        });
 
-        if (sourceText) {
+        if (sourceText && targetLanguages.length > 0) {
             // Send the translation request to the backend
             $.ajax({
                 url: 'http://127.0.0.1:5000/translate',
@@ -173,7 +194,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                     text: sourceText,
-                    target_lang: targetLanguage
+                    target_lang: targetLanguages
                 }),
                 success: function(response) {
                     if (response.translated_text) {
@@ -187,7 +208,7 @@
                 }
             });
         } else {
-            $('#resultText').html('Please enter text to translate.');
+            $('#resultText').html('Please enter text and select at least one target language.');
         }
     });
 </script>
