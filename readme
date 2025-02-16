@@ -1,6 +1,4 @@
-Below is a combined README example that incorporates all the suggested sections. Feel free to customize any of the details (like port number, library versions, or license) to reflect your actual project setup.
-
-# Chicken Translate
+Chicken Translate
 
 Chicken Translate is a multilingual translator web application that integrates speech-to-text (via OpenAI Whisper) and text-to-text translation (via DeepL). Its goal is to break language barriers by providing an easy-to-use interface for both typed and voice-based translations.
 
@@ -103,27 +101,6 @@ We welcome contributions! To contribute:
 	3.	Submit a pull request, describing your changes.
 	4.	Ensure any new dependencies are added to requirements.txt.
 
-License
-
-<details>
-  <summary>MIT License (example)</summary>
-
-
-MIT License
-
-Copyright (c) 2025 ...
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-... (standard MIT text)
-
-</details>
-
 
 FAQ / Known Issues
 	•	FFmpeg Not Found: Make sure to install FFmpeg and set your PATH so Whisper can process audio.
@@ -131,5 +108,3 @@ FAQ / Known Issues
 	•	Windows Mic Access: Check your Privacy settings if the browser can’t record audio.
 
 Thank you for exploring Chicken Translate! We hope to make global communication more accessible, one translation at a time.
-
-This **combined README** gives anyone approaching your project enough context to install, run, and contribute while detailing your app’s purpose and structure. Feel free to customize or expand these sections based on your specific needs.
