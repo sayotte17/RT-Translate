@@ -49,9 +49,9 @@
       overflow-y: auto;
       width: 100%;
       
-      /* Modern/Custom scrollbar styles for Chrome, Edge, Safari */
-      scrollbar-width: thin;             /* For Firefox */
-      scrollbar-color: #007bff #f8f9fa;  /* thumb and track colors */
+      /* Modern/Custom scrollbar styles (Chrome, Edge, Safari) */
+      scrollbar-width: thin;            
+      scrollbar-color: #007bff #f8f9fa; 
     }
     .dropdown-menu::-webkit-scrollbar {
       width: 8px;
@@ -63,7 +63,7 @@
     .dropdown-menu::-webkit-scrollbar-thumb {
       background-color: #007bff;
       border-radius: 10px;
-      border: 2px solid #f8f9fa; /* space around thumb */
+      border: 2px solid #f8f9fa; 
     }
     
     .dropdown-item input[type="checkbox"] {
@@ -92,6 +92,18 @@
       font-size: 0.9rem;
       color: #666;
       margin-top: 40px;
+    }
+    /* Mic icon styling */
+    .mic-btn {
+      background: none;
+      border: none;
+      color: #007bff;
+      font-size: 1.3rem;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+    .mic-btn:focus {
+      outline: none;
     }
   </style>
 </head>
@@ -139,10 +151,9 @@
     <!-- Translation Form -->
     <form id="translateForm">
       
-      <!-- Source Language (single-select dropdown, mirrored style) -->
+      <!-- Source Language (single-select dropdown) -->
       <div class="mb-3">
         <label class="form-label fw-bold">Select Source Language</label>
-        <!-- Keep the dropdown open after selecting inside by using data-bs-auto-close="outside" -->
         <div class="dropdown" data-bs-auto-close="outside">
           <button 
             class="btn btn-secondary dropdown-toggle w-100" 
@@ -154,7 +165,6 @@
             Choose Source Language
           </button>
           <ul class="dropdown-menu" aria-labelledby="sourceDropdownButton">
-            <!-- Single-select: each item is a link with data-value -->
             <li><a class="dropdown-item" href="#" data-value="EN">English</a></li>
             <li><a class="dropdown-item" href="#" data-value="DE">German</a></li>
             <li><a class="dropdown-item" href="#" data-value="FR">French</a></li>
@@ -186,15 +196,14 @@
             <li><a class="dropdown-item" href="#" data-value="ZH-HANS">Chinese (Simplified)</a></li>
             <li><a class="dropdown-item" href="#" data-value="ZH-HANT">Chinese (Traditional)</a></li>
           </ul>
-          <!-- Hidden input to store the selected source lang for form submission -->
+          <!-- Hidden input for the selected source lang -->
           <input type="hidden" id="sourceLanguage" value="EN"/>
         </div>
       </div>
 
-      <!-- Target Language(s) (multi-select with checkboxes) -->
+      <!-- Target Languages -->
       <div class="mb-3">
         <label class="form-label fw-bold">Select Target Languages</label>
-        <!-- Keep the dropdown open until the user clicks outside -->
         <div class="dropdown" data-bs-auto-close="outside">
           <button 
             class="btn btn-secondary dropdown-toggle w-100" 
@@ -206,7 +215,10 @@
             Select Target Languages
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><label class="dropdown-item"><input type="checkbox" value="EN" /> English</label></li>
+            <!-- Replaced 'EN' with EN-US and EN-GB for target languages -->
+            <li><label class="dropdown-item"><input type="checkbox" value="EN-US" /> English (U.S.)</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="EN-GB" /> English (U.K.)</label></li>
+            
             <li><label class="dropdown-item"><input type="checkbox" value="DE" /> German</label></li>
             <li><label class="dropdown-item"><input type="checkbox" value="FR" /> French</label></li>
             <li><label class="dropdown-item"><input type="checkbox" value="ES" /> Spanish</label></li>
@@ -240,10 +252,17 @@
         </div>
       </div>
 
-      <!-- Source Text -->
+      <!-- Source Text + Microphone Icon -->
       <div class="mb-3">
-        <label for="sourceText" class="form-label fw-bold">Enter Text</label>
-        <textarea class="form-control" id="sourceText" rows="4" placeholder="Enter text to translate..."></textarea>
+        <label for="sourceText" class="form-label fw-bold d-inline-block">
+          Enter Text
+        </label>
+        <!-- Microphone button -->
+        <button type="button" class="mic-btn" id="micButton" title="Record / Stop Recording">
+          🎤
+        </button>
+
+        <textarea class="form-control mt-2" id="sourceText" rows="4" placeholder="Enter text to translate..."></textarea>
       </div>
 
       <!-- Translate Button -->
@@ -260,20 +279,19 @@
   <!-- Footer -->
   <footer>
     <div class="container">
-      <span class="text-muted"
-        >© 2025 Chicken Translate. All Rights Reserved.</span>
+      <span class="text-muted">© 2025 Chicken Translate. All Rights Reserved.</span>
     </div>
   </footer>
 
-  <!-- jQuery and Bootstrap JS (needed for dropdowns and AJAX) -->
+  <!-- jQuery and Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script 
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
   </script>
 
-  <!-- Scripts to handle dropdown selection & form submission -->
+  <!-- Scripts to handle dropdown selection, form submission, and microphone recording -->
   <script>
-    // Cache references for convenience
+    // -------------- BEGIN DROPDOWNS (unchanged, except for the new EN-US and EN-GB) --------------
     const $sourceDropdownButton = $('#sourceDropdownButton');
     const $sourceListItems = $sourceDropdownButton.siblings('.dropdown-menu').find('.dropdown-item');
     const $hiddenSourceInput = $('#sourceLanguage');
@@ -295,68 +313,152 @@
       } else if (selectedValues.length <= 3) {
         $targetDropdownButton.text(selectedValues.join(', '));
       } else {
-        // If more than 3, show only the first 3 plus '...'
         const firstThree = selectedValues.slice(0, 3).join(', ');
         $targetDropdownButton.text(firstThree + '...');
       }
     }
 
-    // Disable the checkbox for the source language in the target list
-    // (so you can't select the same language for source and target)
     function syncSourceWithTargetDisabled() {
       const currentSource = $hiddenSourceInput.val();
-
       $targetCheckboxes.each(function() {
-        const val = $(this).val();
-        if (val === currentSource) {
-          $(this).prop('checked', false);   // uncheck if it was checked
-          $(this).prop('disabled', true);   // disable the checkbox
+        if ($(this).val() === currentSource) {
+          $(this).prop('checked', false);
+          $(this).prop('disabled', true);
         } else {
-          $(this).prop('disabled', false);  // enable others
+          $(this).prop('disabled', false);
         }
       });
-      // After adjusting checkboxes, update the dropdown label
       updateTargetButtonLabel();
     }
 
-    // When the document is ready...
     $(document).ready(function () {
-      // 1. Initialize the label based on default source and target
       syncSourceWithTargetDisabled();
 
-      // 2. When a user selects a new source language:
       $sourceListItems.on('click', function (e) {
         e.preventDefault();
         const selectedLang = $(this).data('value');
-        $sourceDropdownButton.text($(this).text()); // update button label
-        $hiddenSourceInput.val(selectedLang);        // update hidden input
-
-        // Keep the target from being the same as source
+        $sourceDropdownButton.text($(this).text());
+        $hiddenSourceInput.val(selectedLang);
         syncSourceWithTargetDisabled();
       });
 
-      // 3. Whenever a target checkbox is toggled, update the button label
       $targetCheckboxes.on('change', function() {
         updateTargetButtonLabel();
       });
     });
+    // -------------- END DROPDOWNS --------------
 
-    // Handle form submission for multiple target languages
+    // -------------- BEGIN VOICE RECORDING LOGIC --------------
+    let isRecording = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+
+    const micButton = document.getElementById('micButton');
+    micButton.addEventListener('click', async () => {
+      try {
+        if (!isRecording) {
+          // Start recording
+          isRecording = true;
+          micButton.textContent = '⏹'; // Change icon/text to "Stop"
+
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+
+          audioChunks = []; // reset
+          mediaRecorder.ondataavailable = (e) => {
+            if (e.data.size > 0) {
+              audioChunks.push(e.data);
+            }
+          };
+
+          // When stopping, create the Blob and send to backend
+          mediaRecorder.onstop = async () => {
+            // Stop all mic tracks so the user’s mic isn’t still recording
+            stream.getTracks().forEach((track) => track.stop());
+
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+
+            // Send multiple requests if multiple target languages selected
+            const sourceLang = $hiddenSourceInput.val();
+            const selectedTargets = [];
+            $targetCheckboxes.each(function() {
+              if ($(this).is(':checked')) {
+                selectedTargets.push($(this).val());
+              }
+            });
+
+            // If none selected, do nothing or default to EN-US or similar
+            if (selectedTargets.length === 0) {
+              $('#resultText').html('No target languages selected for speech translation.');
+              return;
+            }
+
+            // We'll store the final transcribed text from the first call
+            let didSetTranscribedText = false;
+
+            // For each target language, call the backend
+            for (const lang of selectedTargets) {
+              const formData = new FormData();
+              formData.append('audio', audioBlob, 'recording.wav');
+              formData.append('target_lang', lang);
+
+              try {
+                const resp = await fetch('http://127.0.0.1:5000/speech_to_text', {
+                  method: 'POST',
+                  body: formData
+                });
+                const data = await resp.json();
+
+                if (data.error) {
+                  $('#resultText').append(
+                    `<p><strong>${lang}:</strong> Error: ${data.error}</p>`
+                  );
+                } else {
+                  // Put the transcribed text in the "Enter text" box once, from the first request
+                  if (!didSetTranscribedText) {
+                    $('#sourceText').val(data.transcribed_text);
+                    didSetTranscribedText = true;
+                  }
+                  // Show the translated text
+                  $('#resultText').append(
+                    `<p><strong>${lang}:</strong> ${data.translated_text}</p>`
+                  );
+                }
+              } catch (err) {
+                $('#resultText').append(
+                  `<p><strong>${lang}:</strong> Request failed.</p>`
+                );
+              }
+            }
+          };
+
+          mediaRecorder.start();
+        } else {
+          // Stop recording
+          isRecording = false;
+          micButton.textContent = '🎤'; // Reset icon
+          mediaRecorder.stop();
+        }
+      } catch (err) {
+        console.error('Error accessing microphone:', err);
+        alert('Could not access microphone. Please check permissions.');
+      }
+    });
+    // -------------- END VOICE RECORDING LOGIC --------------
+
+    // -------------- BEGIN FORM SUBMISSION (TEXT TRANSLATION) --------------
     $('#translateForm').on('submit', function(event) {
       event.preventDefault();
 
-      // Grab text and source language
       const sourceText = $('#sourceText').val().trim();
       const sourceLanguage = $hiddenSourceInput.val();
 
-      // Collect selected target languages
       const checkedBoxes = $targetCheckboxes.filter(':checked');
       let targetLanguages = [];
       checkedBoxes.each(function () {
         targetLanguages.push($(this).val());
       });
 
-      // Clear the results area
       $('#resultText').html('');
 
       if (!sourceText) {
@@ -368,10 +470,10 @@
         return;
       }
 
-      // Example: send a separate AJAX request for each selected language
+      // Multiple requests, one per target
       targetLanguages.forEach(lang => {
         $.ajax({
-          url: 'http://127.0.0.1:5000/translate', // Adjust to your actual endpoint
+          url: 'http://127.0.0.1:5000/translate', // your text-based endpoint
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({
@@ -381,7 +483,6 @@
           }),
           success: function(response) {
             if (response.translated_text) {
-              // Append each translated text
               $('#resultText').append(
                 '<p><strong>' + lang + ':</strong> ' + response.translated_text + '</p>'
               );
@@ -399,6 +500,7 @@
         });
       });
     });
+    // -------------- END FORM SUBMISSION --------------
   </script>
 </body>
 </html>

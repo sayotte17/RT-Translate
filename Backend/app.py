@@ -35,25 +35,50 @@ def translate_text():
         return jsonify({"error": str(e)}), 500
     
 @app.route('/speech_to_text', methods=['POST'])
-def speech_to_text():
+def speech_to_text_and_translate():
+    """
+    Expects:
+      - `audio`: The uploaded audio file (e.g., WAV, MP3, etc.)
+      - `target_lang`: The language code to translate into
+    Returns:
+      - JSON with the 'transcribed_text' and 'translated_text'
+    """
     try:
-        # Check if an audio file is in the request
+        # Check for the audio file
         if 'audio' not in request.files:
             return jsonify({"error": "No audio file provided"}), 400
 
-        audio_file = request.files['audio']
+        # Get target language (e.g., from form data or JSON body)
+        target_lang = request.form.get('target_lang') or request.args.get('target_lang')
+        if not target_lang and request.is_json:
+            data = request.get_json()
+            target_lang = data.get('target_lang')
+
+        if not target_lang:
+            return jsonify({"error": "No target language provided"}), 400
 
         # Save the file temporarily
+        audio_file = request.files['audio']
         file_path = "temp_audio.wav"
         audio_file.save(file_path)
 
-        # Transcribe the audio
+        # 1) Transcribe the audio with Whisper
         result = model.transcribe(file_path)
+        transcribed_text = result["text"]
 
-        # Delete the temporary file
+        # 2) Translate the transcribed text with DeepL
+        target_lang = target_lang.upper()  # DeepL requires uppercase
+        translation = translator.translate_text(transcribed_text, target_lang=target_lang)
+        translated_text = translation.text
+
+        # Clean up
         os.remove(file_path)
 
-        return jsonify({"transcribed_text": result["text"]})
+        # Return both raw transcription and final translation
+        return jsonify({
+            "transcribed_text": transcribed_text,
+            "translated_text": translated_text
+        })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
