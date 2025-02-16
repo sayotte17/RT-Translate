@@ -1,8 +1,16 @@
 from flask import Flask, jsonify, render_template, request
-import requests
-import os
+import requests, os, json
 
 app = Flask(__name__, template_folder=os.path.join('Frontend', 'templates'))
+
+def load_stats():
+    """Load stats from db.json, or return defaults if not found."""
+    if not os.path.exists('db.json'):
+        # If file doesn't exist, return default stats
+        return {"translations_processed": 0, "words_translated": 0}
+    
+    with open('db.json', 'r') as f:
+        return json.load(f)
 
 # Route for 'home.html'
 @app.route('/')
@@ -17,7 +25,13 @@ def translator():
 # Route for 'about.html'
 @app.route('/about')
 def about():
-    return render_template('about.html')
+    stats = load_stats()
+    # Pass them to the template
+    return render_template(
+        'about.html',
+        translations_processed=stats["translations_processed"],
+        words_translated=stats["words_translated"]
+    )
 
 # Example API endpoint (JSON response)
 @app.route('/api')
