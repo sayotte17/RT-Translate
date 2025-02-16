@@ -3,356 +3,385 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Translate App</title>
+  <title>Translator - Chicken Translate</title>
+  <!-- Bootstrap CSS -->
   <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
     rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
   />
   <style>
+    /* Keep style consistent with other pages */
     body {
       font-family: 'Arial', sans-serif;
-      background-color: #f4f7fc;
-      padding-top: 40px;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
     }
     .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 40px;
-      background-color: #ffffff;
+      max-width: 900px;
+      margin-top: 50px;
+      margin-bottom: 50px;
+      background-color: #fff;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
     }
-    .heading {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 2.5rem;
-      color: #007bff;
-    }
-    .form-group label {
-      font-weight: bold;
+    h1, h2, h3, h4 {
       color: #333;
     }
-    .form-control,
-    .btn {
-      border-radius: 10px;
+    p, label {
+      color: #555;
+    }
+    .form-control, .btn {
+      border-radius: 6px;
     }
     .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
       padding: 10px 20px;
       font-size: 1.1rem;
     }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #004085;
+    /* Make both dropdowns look and behave similarly */
+    .dropdown-toggle {
+      border-radius: 6px !important;
     }
-    .result-area {
-      margin-top: 30px;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      background-color: #f8f9fa;
-    }
-    .result-area h5 {
-      font-size: 1.5rem;
-      color: #333;
-    }
-    .result-area p {
-      font-size: 1.1rem;
-      color: #007bff;
-    }
+    /* Restrict height + add custom scrollbar styling */
     .dropdown-menu {
       max-height: 200px;
       overflow-y: auto;
       width: 100%;
+      
+      /* Modern/Custom scrollbar styles for Chrome, Edge, Safari */
+      scrollbar-width: thin;             /* For Firefox */
+      scrollbar-color: #007bff #f8f9fa;  /* thumb and track colors */
     }
-    .dropdown-item input[type='checkbox'] {
+    .dropdown-menu::-webkit-scrollbar {
+      width: 8px;
+    }
+    .dropdown-menu::-webkit-scrollbar-track {
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    .dropdown-menu::-webkit-scrollbar-thumb {
+      background-color: #007bff;
+      border-radius: 10px;
+      border: 2px solid #f8f9fa; /* space around thumb */
+    }
+    
+    .dropdown-item input[type="checkbox"] {
       margin-right: 10px;
+    }
+    .result-area {
+      background-color: #f8f9fa;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    .result-area h5 {
+      color: #333;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    .result-area p {
+      color: #007bff;
+    }
+    /* Footer */
+    footer {
+      background-color: #f1f1f1;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="heading">Translate Your Text</h1>
 
-    <form id="translateForm">
-      <!-- Source Language Dropdown -->
-      <div class="form-group">
-        <label for="sourceLanguage">Select Source Language</label>
-        <select class="form-control language-select" id="sourceLanguage">
-          <option value="EN">English</option>
-          <option value="DE">German</option>
-          <option value="FR">French</option>
-          <option value="ES">Spanish</option>
-          <option value="AR">Arabic</option>
-          <option value="BG">Bulgarian</option>
-          <option value="CS">Czech</option>
-          <option value="DA">Danish</option>
-          <option value="EL">Greek</option>
-          <option value="FI">Finnish</option>
-          <option value="HU">Hungarian</option>
-          <option value="ID">Indonesian</option>
-          <option value="IT">Italian</option>
-          <option value="JA">Japanese</option>
-          <option value="KO">Korean</option>
-          <option value="LT">Lithuanian</option>
-          <option value="LV">Latvian</option>
-          <option value="NB">Norwegian Bokmål</option>
-          <option value="NL">Dutch</option>
-          <option value="PL">Polish</option>
-          <option value="PT">Portuguese</option>
-          <option value="RO">Romanian</option>
-          <option value="RU">Russian</option>
-          <option value="SK">Slovak</option>
-          <option value="SL">Slovenian</option>
-          <option value="SV">Swedish</option>
-          <option value="TR">Turkish</option>
-          <option value="UK">Ukrainian</option>
-          <option value="ZH-HANS">Chinese (Simplified)</option>
-          <option value="ZH-HANT">Chinese (Traditional)</option>
-        </select>
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('home') }}">Chicken Translate</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ url_for('translator') }}">Translator</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('about') }}">About Us</a>
+          </li>
+        </ul>
       </div>
+    </div>
+  </nav>
 
-      <!-- Target Language Dropdown with checkboxes -->
-      <div class="form-group mt-4">
-        <label for="targetLanguage">Select Target Languages</label>
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary dropdown-toggle w-100"
-            type="button"
-            id="dropdownMenuButton"
-            data-bs-toggle="dropdown"
+  <!-- Main Container -->
+  <div class="container">
+    <h1 class="text-center mb-4">Translator</h1>
+    <p class="text-center">
+      Enter your text, choose your source language, and select one or more target languages to get started.
+    </p>
+
+    <!-- Translation Form -->
+    <form id="translateForm">
+      
+      <!-- Source Language (single-select dropdown, mirrored style) -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Select Source Language</label>
+        <!-- Keep the dropdown open after selecting inside by using data-bs-auto-close="outside" -->
+        <div class="dropdown" data-bs-auto-close="outside">
+          <button 
+            class="btn btn-secondary dropdown-toggle w-100" 
+            type="button" 
+            id="sourceDropdownButton" 
+            data-bs-toggle="dropdown" 
             aria-expanded="false"
           >
-            Choose Target Languages
+            Choose Source Language
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="sourceDropdownButton">
+            <!-- Single-select: each item is a link with data-value -->
+            <li><a class="dropdown-item" href="#" data-value="EN">English</a></li>
+            <li><a class="dropdown-item" href="#" data-value="DE">German</a></li>
+            <li><a class="dropdown-item" href="#" data-value="FR">French</a></li>
+            <li><a class="dropdown-item" href="#" data-value="ES">Spanish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="AR">Arabic</a></li>
+            <li><a class="dropdown-item" href="#" data-value="BG">Bulgarian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="CS">Czech</a></li>
+            <li><a class="dropdown-item" href="#" data-value="DA">Danish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="EL">Greek</a></li>
+            <li><a class="dropdown-item" href="#" data-value="FI">Finnish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="HU">Hungarian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="ID">Indonesian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="IT">Italian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="JA">Japanese</a></li>
+            <li><a class="dropdown-item" href="#" data-value="KO">Korean</a></li>
+            <li><a class="dropdown-item" href="#" data-value="LT">Lithuanian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="LV">Latvian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="NB">Norwegian Bokmål</a></li>
+            <li><a class="dropdown-item" href="#" data-value="NL">Dutch</a></li>
+            <li><a class="dropdown-item" href="#" data-value="PL">Polish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="PT">Portuguese</a></li>
+            <li><a class="dropdown-item" href="#" data-value="RO">Romanian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="RU">Russian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="SK">Slovak</a></li>
+            <li><a class="dropdown-item" href="#" data-value="SL">Slovenian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="SV">Swedish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="TR">Turkish</a></li>
+            <li><a class="dropdown-item" href="#" data-value="UK">Ukrainian</a></li>
+            <li><a class="dropdown-item" href="#" data-value="ZH-HANS">Chinese (Simplified)</a></li>
+            <li><a class="dropdown-item" href="#" data-value="ZH-HANT">Chinese (Traditional)</a></li>
+          </ul>
+          <!-- Hidden input to store the selected source lang for form submission -->
+          <input type="hidden" id="sourceLanguage" value="EN"/>
+        </div>
+      </div>
+
+      <!-- Target Language(s) (multi-select with checkboxes) -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Select Target Languages</label>
+        <!-- Keep the dropdown open until the user clicks outside -->
+        <div class="dropdown" data-bs-auto-close="outside">
+          <button 
+            class="btn btn-secondary dropdown-toggle w-100" 
+            type="button" 
+            id="dropdownMenuButton" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+          >
+            Select Target Languages
           </button>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="EN" /> English</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="DE" /> German</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="FR" /> French</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="ES" /> Spanish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="AR" /> Arabic</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="BG" /> Bulgarian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="CS" /> Czech</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="DA" /> Danish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="EL" /> Greek</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="FI" /> Finnish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="HU" /> Hungarian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="ID" /> Indonesian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="IT" /> Italian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="JA" /> Japanese</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="KO" /> Korean</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="LT" /> Lithuanian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="LV" /> Latvian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="NB" /> Norwegian Bokmål</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="NL" /> Dutch</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="PL" /> Polish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="PT" /> Portuguese</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="RO" /> Romanian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="RU" /> Russian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="SK" /> Slovak</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="SL" /> Slovenian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="SV" /> Swedish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="TR" /> Turkish</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="UK" /> Ukrainian</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="ZH-HANS" /> Chinese (Simplified)</label
-              >
-            </li>
-            <li>
-              <label class="dropdown-item"
-                ><input type="checkbox" value="ZH-HANT" /> Chinese (Traditional)</label
-              >
-            </li>
+            <li><label class="dropdown-item"><input type="checkbox" value="EN" /> English</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="DE" /> German</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="FR" /> French</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="ES" /> Spanish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="AR" /> Arabic</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="BG" /> Bulgarian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="CS" /> Czech</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="DA" /> Danish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="EL" /> Greek</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="FI" /> Finnish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="HU" /> Hungarian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="ID" /> Indonesian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="IT" /> Italian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="JA" /> Japanese</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="KO" /> Korean</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="LT" /> Lithuanian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="LV" /> Latvian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="NB" /> Norwegian Bokmål</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="NL" /> Dutch</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="PL" /> Polish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="PT" /> Portuguese</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="RO" /> Romanian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="RU" /> Russian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="SK" /> Slovak</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="SL" /> Slovenian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="SV" /> Swedish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="TR" /> Turkish</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="UK" /> Ukrainian</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="ZH-HANS" /> Chinese (Simplified)</label></li>
+            <li><label class="dropdown-item"><input type="checkbox" value="ZH-HANT" /> Chinese (Traditional)</label></li>
           </ul>
         </div>
       </div>
 
-      <!-- Text Area for Input -->
-      <div class="form-group mt-4">
-        <label for="sourceText">Enter Text</label>
-        <textarea
-          class="form-control"
-          id="sourceText"
-          rows="4"
-          placeholder="Enter text to translate..."
-        ></textarea>
+      <!-- Source Text -->
+      <div class="mb-3">
+        <label for="sourceText" class="form-label fw-bold">Enter Text</label>
+        <textarea class="form-control" id="sourceText" rows="4" placeholder="Enter text to translate..."></textarea>
       </div>
 
-      <!-- Submit Button -->
-      <button type="submit" class="btn btn-primary w-100 mt-4">
-        Translate
-      </button>
+      <!-- Translate Button -->
+      <button type="submit" class="btn btn-primary w-100 mt-3">Translate</button>
     </form>
 
-    <!-- Translated Text Result -->
+    <!-- Translation Result Area -->
     <div class="result-area mt-5">
       <h5>Translated Text</h5>
-      <div id="resultText">Your translated text will appear here...</div>
+      <p id="resultText">Your translated text will appear here...</p>
     </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-  ></script>
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <span class="text-muted"
+        >© 2025 Chicken Translate. All Rights Reserved.</span>
+    </div>
+  </footer>
 
+  <!-- jQuery and Bootstrap JS (needed for dropdowns and AJAX) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+  <!-- Scripts to handle dropdown selection & form submission -->
   <script>
-    $('#translateForm').on('submit', function (event) {
+    // Cache references for convenience
+    const $sourceDropdownButton = $('#sourceDropdownButton');
+    const $sourceListItems = $sourceDropdownButton.siblings('.dropdown-menu').find('.dropdown-item');
+    const $hiddenSourceInput = $('#sourceLanguage');
+
+    const $targetDropdownButton = $('#dropdownMenuButton');
+    const $targetCheckboxes = $targetDropdownButton.siblings('.dropdown-menu').find('input[type="checkbox"]');
+
+    // Update the target dropdown button label based on selected checkboxes
+    function updateTargetButtonLabel() {
+      const selectedValues = [];
+      $targetCheckboxes.each(function() {
+        if ($(this).is(':checked')) {
+          selectedValues.push($(this).val());
+        }
+      });
+
+      if (selectedValues.length === 0) {
+        $targetDropdownButton.text('Select Target Languages');
+      } else if (selectedValues.length <= 3) {
+        $targetDropdownButton.text(selectedValues.join(', '));
+      } else {
+        // If more than 3, show only the first 3 plus '...'
+        const firstThree = selectedValues.slice(0, 3).join(', ');
+        $targetDropdownButton.text(firstThree + '...');
+      }
+    }
+
+    // Disable the checkbox for the source language in the target list
+    // (so you can't select the same language for source and target)
+    function syncSourceWithTargetDisabled() {
+      const currentSource = $hiddenSourceInput.val();
+
+      $targetCheckboxes.each(function() {
+        const val = $(this).val();
+        if (val === currentSource) {
+          $(this).prop('checked', false);   // uncheck if it was checked
+          $(this).prop('disabled', true);   // disable the checkbox
+        } else {
+          $(this).prop('disabled', false);  // enable others
+        }
+      });
+      // After adjusting checkboxes, update the dropdown label
+      updateTargetButtonLabel();
+    }
+
+    // When the document is ready...
+    $(document).ready(function () {
+      // 1. Initialize the label based on default source and target
+      syncSourceWithTargetDisabled();
+
+      // 2. When a user selects a new source language:
+      $sourceListItems.on('click', function (e) {
+        e.preventDefault();
+        const selectedLang = $(this).data('value');
+        $sourceDropdownButton.text($(this).text()); // update button label
+        $hiddenSourceInput.val(selectedLang);        // update hidden input
+
+        // Keep the target from being the same as source
+        syncSourceWithTargetDisabled();
+      });
+
+      // 3. Whenever a target checkbox is toggled, update the button label
+      $targetCheckboxes.on('change', function() {
+        updateTargetButtonLabel();
+      });
+    });
+
+    // Handle form submission for multiple target languages
+    $('#translateForm').on('submit', function(event) {
       event.preventDefault();
 
+      // Grab text and source language
       const sourceText = $('#sourceText').val().trim();
-      const checkedBoxes = $('#dropdownMenuButton')
-        .siblings('.dropdown-menu')
-        .find('input[type="checkbox"]:checked');
+      const sourceLanguage = $hiddenSourceInput.val();
 
       // Collect selected target languages
+      const checkedBoxes = $targetCheckboxes.filter(':checked');
       let targetLanguages = [];
       checkedBoxes.each(function () {
         targetLanguages.push($(this).val());
       });
 
+      // Clear the results area
+      $('#resultText').html('');
+
       if (!sourceText) {
         $('#resultText').html('Please enter text to translate.');
         return;
       }
-
       if (targetLanguages.length === 0) {
         $('#resultText').html('Please select at least one target language.');
         return;
       }
 
-      // Clear out old translations from the results area
-      $('#resultText').html('');
-
-      // For each language, make a separate request
-      targetLanguages.forEach(function (lang) {
-        // Make a POST request for each selected language
+      // Example: send a separate AJAX request for each selected language
+      targetLanguages.forEach(lang => {
         $.ajax({
-          url: 'http://127.0.0.1:5000/translate',
+          url: 'http://127.0.0.1:5000/translate', // Adjust to your actual endpoint
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify({
             text: sourceText,
-            target_lang: lang // send just one language
+            source_lang: sourceLanguage,
+            target_lang: lang
           }),
-          success: function (response) {
-            // Append each translated text to the result area
+          success: function(response) {
             if (response.translated_text) {
-              // Example: show each result as "<strong>DE:</strong> Hallo Welt"
+              // Append each translated text
               $('#resultText').append(
                 '<p><strong>' + lang + ':</strong> ' + response.translated_text + '</p>'
               );
@@ -362,7 +391,7 @@
               );
             }
           },
-          error: function () {
+          error: function() {
             $('#resultText').append(
               '<p><strong>' + lang + ':</strong> An error occurred.</p>'
             );
