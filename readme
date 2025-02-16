@@ -1,1 +1,135 @@
-Eg
+Below is a combined README example that incorporates all the suggested sections. Feel free to customize any of the details (like port number, library versions, or license) to reflect your actual project setup.
+
+# Chicken Translate
+
+Chicken Translate is a multilingual translator web application that integrates speech-to-text (via OpenAI Whisper) and text-to-text translation (via DeepL). Its goal is to break language barriers by providing an easy-to-use interface for both typed and voice-based translations.
+
+---
+
+## Features
+
+- **Instant Translations**: Quickly translate between a variety of languages.  
+- **Speech-to-Text Integration**: Convert voice input into text automatically using Whisper.  
+- **Multiple Target Languages**: Translate into multiple languages in a single request.  
+- **Real-Time Stats**: Track total translations processed and total words translated, displayed on the About page.
+
+---
+
+## Project Structure
+
+RT-Translate/
+├─ Backend/
+│  ├─ app.py            # Main Flask application
+│  ├─ db.json           # JSON file storing persistent stats
+│  └─ …
+├─ Frontend/
+│  ├─ templates/
+│  │  ├─ home.html
+│  │  ├─ translator.html
+│  │  └─ about.html
+├─ requirements.txt     # Python dependencies (if applicable)
+└─ README.md            # This file
+
+- **`Backend/app.py`**: Contains Flask routes for home, translator, and about pages, plus API endpoints for translation and speech-to-text.  
+- **`Backend/db.json`**: A simple JSON-based datastore for tracking stats (e.g., translations processed, words translated).  
+- **`Frontend/templates/`**: HTML files for the UI (Home, Translator, About).  
+
+---
+
+## Requirements & Installation
+
+1. **Python 3.9+** (recommended)
+2. **Pip Packages**:  
+   - `deepl` (for text translation)  
+   - `openai-whisper` or `whisper` (for speech-to-text)  
+   - `flask` (web framework)  
+   - `requests`, `json`, etc.
+
+   You can install them via:  
+   ```bash
+   pip install -r requirements.txt
+
+	3.	FFmpeg:
+	•	Required by Whisper to decode audio on the server.
+	•	macOS: brew install ffmpeg
+	•	Ubuntu/Debian: sudo apt-get install ffmpeg
+	•	Windows: Download from ffmpeg.org and add to your PATH.
+
+Running the Application
+	1.	Clone the repository:
+
+git clone https://github.com/YourUsername/RT-Translate.git
+cd RT-Translate
+
+
+	2.	Install dependencies:
+
+pip install -r requirements.txt
+
+
+	3.	Run the Flask server:
+
+python Backend/app.py
+
+
+	4.	Open your browser and visit:
+
+http://127.0.0.1:3000
+
+(or whatever port is configured in app.py).
+
+	5.	Ensure you have a DeepL API key if needed. This can be hardcoded or placed in an environment variable, depending on your setup.
+
+Usage
+	1.	Home Page – Provides an introduction and links to the Translator and About pages.
+	2.	Translator Page:
+	•	Source Language: Choose from the dropdown.
+	•	Target Languages: Select one or multiple languages.
+	•	Mic Button: Click to start recording speech, click again to stop. The audio is sent to the server, transcribed, and then translated.
+	•	Translate Button: For typed text, click “Translate” after choosing the source/target languages.
+	3.	About Page – Learn about the project’s mission, see real-time stats on Translations Processed and Words Translated.
+
+Stats Tracking
+	•	db.json stores:
+	•	translations_processed: the number of translations completed
+	•	words_translated: a running total of words translated
+	•	Each time a text or voice translation is processed, the server increments these stats. The About page then displays them.
+
+Contributing
+
+We welcome contributions! To contribute:
+	1.	Fork this repo and create a feature branch.
+	2.	Implement your feature or fix.
+	3.	Submit a pull request, describing your changes.
+	4.	Ensure any new dependencies are added to requirements.txt.
+
+License
+
+<details>
+  <summary>MIT License (example)</summary>
+
+
+MIT License
+
+Copyright (c) 2025 ...
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+... (standard MIT text)
+
+</details>
+
+
+FAQ / Known Issues
+	•	FFmpeg Not Found: Make sure to install FFmpeg and set your PATH so Whisper can process audio.
+	•	Mixed Content: If you serve your site over HTTPS, ensure your API calls are also HTTPS.
+	•	Windows Mic Access: Check your Privacy settings if the browser can’t record audio.
+
+Thank you for exploring Chicken Translate! We hope to make global communication more accessible, one translation at a time.
+
+This **combined README** gives anyone approaching your project enough context to install, run, and contribute while detailing your app’s purpose and structure. Feel free to customize or expand these sections based on your specific needs.
